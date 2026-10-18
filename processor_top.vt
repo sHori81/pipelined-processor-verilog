@@ -1,0 +1,63 @@
+`timescale 1ns / 1ps
+
+module tb_processor_top;
+    reg clk, rst, exec;
+    reg [15:0] external_input;
+    reg input_enter;
+    wire wait_for_input;
+    wire [15:0] external_output;
+    wire external_output_enable;
+    wire [15:0] data_reg_0, data_reg_1, data_reg_2, data_reg_3, data_reg_4, data_reg_5, data_reg_6, data_reg_7;
+
+    // プロセッサのインスタンス化
+    processor_top uut (
+        .clk(clk),
+        .rst(rst),
+        .exec(exec),
+        .external_input(external_input),
+        .external_output(external_output),
+        .input_enter(input_enter),
+        .wait_for_input(wait_for_input),
+        .data_reg_0(data_reg_0),
+        .data_reg_1(data_reg_1),
+        .data_reg_2(data_reg_2),
+        .data_reg_3(data_reg_3),
+        .data_reg_4(data_reg_4),
+        .data_reg_5(data_reg_5),
+        .data_reg_6(data_reg_6),
+        .data_reg_7(data_reg_7)
+    );
+
+    // クロック生成 (10nsごとに反転 = 50MHz)
+    always #10 clk = ~clk;
+
+    initial begin
+        // --- 初期化 ---
+        clk = 0;
+        rst = 0; // リセットをかける
+        exec = 0;
+        input_enter = 0;
+        external_input = 16'h0010;
+
+        // --- リセット解除 (3クロック分待機) ---
+        #35 rst = 1; 
+        $display("Reset released.");
+
+        // --- 実行ボタン(exec)を「カチッ」と押す ---
+        #20 exec = 1; // 立ち上がりを検出し、run_stateが1になる
+        #20 exec = 0; // 押しっぱなしでも良いが、実機に合わせて戻す
+        $display("Exec signal pulsed. CPU starting...");
+
+        #300
+            // --- input_enterを「カチッ」と押す ---
+        input_enter = 1; // 立ち上がりを検出してフェーズ2に進む
+        #20 input_enter = 0; // 押しっぱなしでも良いが、実機に合わせて戻す
+        // --- しばらく放置して出力を監視 ---
+        // 命令が5フェーズ（5クロック）で1つ進むので、多めに時間を取る
+        #40000; 
+
+        $display("Simulation finished.");
+        $finish;
+    end
+
+endmodule

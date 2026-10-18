@@ -1,0 +1,62 @@
+`timescale 1ns / 1ps
+
+module tb_shifter;
+
+    // 入力信号
+    reg [15:0] data_b;
+    reg [3:0]  op3;
+    reg [3:0]  diff;
+
+    // 出力信号
+    wire [15:0] data_output;
+    wire [3:0]  data_szcv;
+
+    // モジュールをインスタンス化
+    shifter uut (
+        .data_b(data_b),
+        .op3(op3),
+        .diff(diff),
+        .data_output(data_output),
+        .data_szcv(data_szcv)
+    );
+
+    initial begin
+        // 波形出力
+        $dumpfile("shifter_test.vcd");
+        $dumpvars(0, tb_shifter);
+
+        // 表示形式の指定
+        $monitor("Time:%3d | OP:%b | B:%b | diff:%d | OUT:%b | SZCV:%b", 
+                 $time, op3, data_b, diff, data_output, data_szcv);
+
+        // --- ケース1: 論理左シフト (1000) ---
+        // 1を1ビット左にシフト -> 2
+        $display("\n--- Testing LSL (Logical Left Shift) ---");
+        op3 = 4'b1000; data_b = 16'h0001; diff = 4'd1; #10;
+        // MSB付近をシフトしてキャリーを確認
+        data_b = 16'h8000; diff = 4'd1; #10;
+
+        // --- ケース2: 左ローテート (1001) ---
+        // 最上位ビット(1)が最下位に回るか確認
+        $display("\n--- Testing ROL (Rotate Left) ---");
+        op3 = 4'b1001; data_b = 16'h8001; diff = 4'd1; #10;
+
+        // --- ケース3: 論理右シフト (1010) ---
+        // 符号ビットに関わらず0が挿入されるか
+        $display("\n--- Testing LSR (Logical Right Shift) ---");
+        op3 = 4'b1010; data_b = 16'h8000; diff = 4'd4; #10;
+
+        // --- ケース4: 算術右シフト (1011) ---
+        // 負の数の場合、符号ビット(1)が維持されるか
+        $display("\n--- Testing ASR (Arithmetic Right Shift) ---");
+        op3 = 4'b1011; data_b = 16'hF000; diff = 4'd4; #10;
+
+        // --- ケース5: Zeroフラグの確認 ---
+        $display("\n--- Testing Zero Flag ---");
+        op3 = 4'b1010; data_b = 16'h0001; diff = 4'd1; #10;
+
+        $display("\nAll tests finished.");
+        $finish;
+    end
+
+endmodule

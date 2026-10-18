@@ -1,0 +1,404 @@
+DEPTH = 16384;
+WIDTH = 16;
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+BEGIN
+
+0000 : 8600;    -- LI   R6, 0
+0001 : 8500;    -- LI   R5, 0
+0002 : 6E01;    -- ST   R5, 1(R6)
+0003 : 6E02;    -- ST   R5, 2(R6)
+0004 : C0C0;    -- IN   R0
+0005 : 4600;    -- ST   R0, 0(R6)
+0006 : C0D0;    -- OUT  R0
+0007 : C2C0;    -- IN   R2
+0008 : 9A00;    -- CMPI R2, 0
+0009 : B822;    -- BE   CALC_DONE_EARLY
+000A : 9A09;    -- CMPI R2, 9
+000B : B828;    -- BE   OP_ISPRIME
+000C : 9A0A;    -- CMPI R2, 10
+000D : B827;    -- BE   OP_FIBO
+000E : 9A0B;    -- CMPI R2, 11
+000F : B826;    -- BE   OP_PRIME_N
+0010 : 9A0C;    -- CMPI R2, 12
+0011 : B903;    -- BLT  CHECK_BINARY_OP
+0012 : 9A10;    -- CMPI R2, 16
+0013 : BA24;    -- BLE  OP_MEMORY
+0014 : A01A;    -- B    INVALID_OP_EARLY
+0015 : 9A01;    -- CMPI R2, 1
+0016 : B918;    -- BLT  INVALID_OP_EARLY
+0017 : 9A08;    -- CMPI R2, 8
+0018 : BA01;    -- BLE  READ_VALUE
+0019 : A015;    -- B    INVALID_OP_EARLY
+001A : C1C0;    -- IN   R1
+001B : 9A01;    -- CMPI R2, 1
+001C : B81D;    -- BE   OP_ADD
+001D : 9A02;    -- CMPI R2, 2
+001E : B81D;    -- BE   OP_SUB
+001F : 9A03;    -- CMPI R2, 3
+0020 : B81D;    -- BE   OP_MUL
+0021 : 9A04;    -- CMPI R2, 4
+0022 : B83E;    -- BE   OP_DIVMOD
+0023 : 9A05;    -- CMPI R2, 5
+0024 : B83C;    -- BE   OP_DIVMOD
+0025 : 9A06;    -- CMPI R2, 6
+0026 : B878;    -- BE   OP_GCD
+0027 : 9A07;    -- CMPI R2, 7
+0028 : B80E;    -- BE   OP_LCM
+0029 : 9A08;    -- CMPI R2, 8
+002A : B808;    -- BE   OP_SUM
+002B : A003;    -- B    INVALID_OP_EARLY
+002C : 4600;    -- ST   R0, 0(R6)
+002D : C0D0;    -- OUT  R0
+002E : C0F0;    -- HLT
+002F : 8501;    -- LI   R5, 1
+0030 : 6E02;    -- ST   R5, 2(R6)
+0031 : E8D0;    -- OUT  R5
+0032 : C0F0;    -- HLT
+0033 : A065;    -- B    OP_SUM_FWD_1
+0034 : A065;    -- B    OP_ISPRIME_FWD_1
+0035 : A066;    -- B    OP_FIBO_FWD_1
+0036 : A066;    -- B    OP_PRIME_N_FWD_1
+0037 : A063;    -- B    OP_LCM_FWD_1
+0038 : A065;    -- B    OP_MEMORY_BODY_FWD_1
+0039 : A0CD;    -- B    READ_OP
+003A : C800;    -- ADD  R0, R1
+003B : A057;    -- B    SAVE_RESULT_1
+003C : C810;    -- SUB  R0, R1
+003D : A055;    -- B    SAVE_RESULT_1
+003E : 8300;    -- LI   R3, 0
+003F : 8400;    -- LI   R4, 0
+0040 : 8701;    -- LI   R7, 1
+0041 : 9800;    -- CMPI R0, 0
+0042 : B90C;    -- BLT  MUL_NEG_A
+0043 : 9900;    -- CMPI R1, 0
+0044 : B90F;    -- BLT  MUL_NEG_B
+0045 : 9900;    -- CMPI R1, 0
+0046 : B812;    -- BE   MUL_UNSIGNED_DONE
+0047 : CD60;    -- MOV  R5, R1
+0048 : AD01;    -- ANDI R5, 1
+0049 : 9D00;    -- CMPI R5, 0
+004A : B801;    -- BE   MUL_SKIP_ADD
+004B : C300;    -- ADD  R3, R0
+004C : C081;    -- SLL  R0, 1
+004D : C1A1;    -- SRL  R1, 1
+004E : A0F6;    -- B    MUL_LOOP
+004F : FC40;    -- XOR  R4, R7
+0050 : 8500;    -- LI   R5, 0
+0051 : C510;    -- SUB  R5, R0
+0052 : E860;    -- MOV  R0, R5
+0053 : A0EF;    -- B    MUL_AFTER_A
+0054 : FC40;    -- XOR  R4, R7
+0055 : 8500;    -- LI   R5, 0
+0056 : CD10;    -- SUB  R5, R1
+0057 : E960;    -- MOV  R1, R5
+0058 : A0EC;    -- B    MUL_AFTER_B
+0059 : D860;    -- MOV  R0, R3
+005A : 9C00;    -- CMPI R4, 0
+005B : BB01;    -- BNE  MUL_NEG_RESULT
+005C : A036;    -- B    SAVE_RESULT_1
+005D : 8500;    -- LI   R5, 0
+005E : C510;    -- SUB  R5, R0
+005F : E860;    -- MOV  R0, R5
+0060 : A032;    -- B    SAVE_RESULT_1
+0061 : 9900;    -- CMPI R1, 0
+0062 : B82C;    -- BE   DIV_BY_ZERO
+0063 : 8400;    -- LI   R4, 0
+0064 : 8700;    -- LI   R7, 0
+0065 : 9800;    -- CMPI R0, 0
+0066 : B909;    -- BLT  DIV_NEG_A
+0067 : 9900;    -- CMPI R1, 0
+0068 : B90E;    -- BLT  DIV_NEG_B
+0069 : C360;    -- MOV  R3, R0
+006A : 8000;    -- LI   R0, 0
+006B : CB50;    -- CMP  R3, R1
+006C : B910;    -- BLT  DIV_UNSIGNED_DONE
+006D : CB10;    -- SUB  R3, R1
+006E : 8801;    -- ADDI R0, 1
+006F : A0FB;    -- B    DIV_LOOP
+0070 : 8701;    -- LI   R7, 1
+0071 : 8501;    -- LI   R5, 1
+0072 : EC40;    -- XOR  R4, R5
+0073 : 8500;    -- LI   R5, 0
+0074 : C510;    -- SUB  R5, R0
+0075 : E860;    -- MOV  R0, R5
+0076 : A0F0;    -- B    DIV_AFTER_A
+0077 : 8501;    -- LI   R5, 1
+0078 : EC40;    -- XOR  R4, R5
+0079 : 8500;    -- LI   R5, 0
+007A : CD10;    -- SUB  R5, R1
+007B : E960;    -- MOV  R1, R5
+007C : A0EC;    -- B    DIV_AFTER_B
+007D : 9C00;    -- CMPI R4, 0
+007E : BB08;    -- BNE  DIV_NEG_QUOTIENT
+007F : 9F00;    -- CMPI R7, 0
+0080 : BB0A;    -- BNE  DIV_NEG_REMAINDER
+0081 : 5E01;    -- ST   R3, 1(R6)
+0082 : 9A05;    -- CMPI R2, 5
+0083 : B801;    -- BE   USE_REMAINDER
+0084 : A00E;    -- B    SAVE_RESULT_1
+0085 : D860;    -- MOV  R0, R3
+0086 : A00C;    -- B    SAVE_RESULT_1
+0087 : 8500;    -- LI   R5, 0
+0088 : C510;    -- SUB  R5, R0
+0089 : E860;    -- MOV  R0, R5
+008A : A0F4;    -- B    DIV_AFTER_QUOTIENT_SIGN
+008B : 8500;    -- LI   R5, 0
+008C : DD10;    -- SUB  R5, R3
+008D : EB60;    -- MOV  R3, R5
+008E : A0F2;    -- B    DIV_AFTER_REMAINDER_SIGN
+008F : 8502;    -- LI   R5, 2
+0090 : 6E02;    -- ST   R5, 2(R6)
+0091 : E8D0;    -- OUT  R5
+0092 : C0F0;    -- HLT
+0093 : 8500;    -- LI   R5, 0
+0094 : 6E02;    -- ST   R5, 2(R6)
+0095 : 4600;    -- ST   R0, 0(R6)
+0096 : C0D0;    -- OUT  R0
+0097 : A0A1;    -- B    READ_OP_BACK_1
+0098 : A0A0;    -- B    READ_OP_BACK_1
+0099 : A05A;    -- B    OP_SUM_BODY
+009A : A067;    -- B    OP_ISPRIME_BODY
+009B : A022;    -- B    OP_LCM_BODY
+009C : A054;    -- B    OP_FIBO_FWD_2
+009D : A054;    -- B    OP_PRIME_N_FWD_2
+009E : A054;    -- B    OP_MEMORY_BODY_FWD_2
+009F : 9800;    -- CMPI R0, 0
+00A0 : B910;    -- BLT  GCD_NEG_A
+00A1 : 9900;    -- CMPI R1, 0
+00A2 : B912;    -- BLT  GCD_NEG_B
+00A3 : 9800;    -- CMPI R0, 0
+00A4 : B809;    -- BE   GCD_A_ZERO
+00A5 : 9900;    -- CMPI R1, 0
+00A6 : B812;    -- BE   SAVE_RESULT_2
+00A7 : C850;    -- CMP  R0, R1
+00A8 : B807;    -- BE   GCD_DONE
+00A9 : B902;    -- BLT  GCD_A_LT_B
+00AA : C810;    -- SUB  R0, R1
+00AB : A0FB;    -- B    GCD_LOOP
+00AC : C110;    -- SUB  R1, R0
+00AD : A0F9;    -- B    GCD_LOOP
+00AE : C860;    -- MOV  R0, R1
+00AF : A009;    -- B    SAVE_RESULT_2
+00B0 : A008;    -- B    SAVE_RESULT_2
+00B1 : 8500;    -- LI   R5, 0
+00B2 : C510;    -- SUB  R5, R0
+00B3 : E860;    -- MOV  R0, R5
+00B4 : A0EC;    -- B    GCD_AFTER_A
+00B5 : 8500;    -- LI   R5, 0
+00B6 : CD10;    -- SUB  R5, R1
+00B7 : E960;    -- MOV  R1, R5
+00B8 : A0EA;    -- B    GCD_AFTER_B
+00B9 : 8500;    -- LI   R5, 0
+00BA : 6E02;    -- ST   R5, 2(R6)
+00BB : 4600;    -- ST   R0, 0(R6)
+00BC : C0D0;    -- OUT  R0
+00BD : A0DA;    -- B    READ_OP_BACK_2
+00BE : 9800;    -- CMPI R0, 0
+00BF : B928;    -- BLT  LCM_NEG_A
+00C0 : 9900;    -- CMPI R1, 0
+00C1 : B92A;    -- BLT  LCM_NEG_B
+00C2 : 4603;    -- ST   R0, 3(R6)
+00C3 : 4E04;    -- ST   R1, 4(R6)
+00C4 : 9800;    -- CMPI R0, 0
+00C5 : B820;    -- BE   LCM_ZERO
+00C6 : 9900;    -- CMPI R1, 0
+00C7 : B81E;    -- BE   LCM_ZERO
+00C8 : C850;    -- CMP  R0, R1
+00C9 : B805;    -- BE   LCM_GCD_DONE
+00CA : B902;    -- BLT  LCM_GCD_A_LT_B
+00CB : C810;    -- SUB  R0, R1
+00CC : A0FB;    -- B    LCM_GCD_LOOP
+00CD : C110;    -- SUB  R1, R0
+00CE : A0F9;    -- B    LCM_GCD_LOOP
+00CF : C560;    -- MOV  R5, R0
+00D0 : 1E03;    -- LD   R3, 3(R6)
+00D1 : 8200;    -- LI   R2, 0
+00D2 : EB50;    -- CMP  R3, R5
+00D3 : B903;    -- BLT  LCM_DIV_DONE
+00D4 : EB10;    -- SUB  R3, R5
+00D5 : 8A01;    -- ADDI R2, 1
+00D6 : A0FB;    -- B    LCM_DIV_LOOP
+00D7 : D060;    -- MOV  R0, R2
+00D8 : 0E04;    -- LD   R1, 4(R6)
+00D9 : 8300;    -- LI   R3, 0
+00DA : 9900;    -- CMPI R1, 0
+00DB : B808;    -- BE   LCM_MUL_DONE
+00DC : CC60;    -- MOV  R4, R1
+00DD : AC01;    -- ANDI R4, 1
+00DE : 9C00;    -- CMPI R4, 0
+00DF : B801;    -- BE   LCM_MUL_SKIP_ADD
+00E0 : C300;    -- ADD  R3, R0
+00E1 : C081;    -- SLL  R0, 1
+00E2 : C1A1;    -- SRL  R1, 1
+00E3 : A0F6;    -- B    LCM_MUL_LOOP
+00E4 : D860;    -- MOV  R0, R3
+00E5 : A0D3;    -- B    SAVE_RESULT_2
+00E6 : 8000;    -- LI   R0, 0
+00E7 : A0D1;    -- B    SAVE_RESULT_2
+00E8 : 8500;    -- LI   R5, 0
+00E9 : C510;    -- SUB  R5, R0
+00EA : E860;    -- MOV  R0, R5
+00EB : A0D4;    -- B    LCM_AFTER_A
+00EC : 8500;    -- LI   R5, 0
+00ED : CD10;    -- SUB  R5, R1
+00EE : E960;    -- MOV  R1, R5
+00EF : A0D2;    -- B    LCM_AFTER_B
+00F0 : A0A7;    -- B    READ_OP_BACK_2
+00F1 : A026;    -- B    OP_FIBO_BODY
+00F2 : A03C;    -- B    OP_PRIME_N_BODY
+00F3 : A05A;    -- B    OP_MEMORY_BODY
+00F4 : C850;    -- CMP  R0, R1
+00F5 : BA03;    -- BLE  SUM_ORDER_OK
+00F6 : C360;    -- MOV  R3, R0
+00F7 : C860;    -- MOV  R0, R1
+00F8 : D960;    -- MOV  R1, R3
+00F9 : C460;    -- MOV  R4, R0
+00FA : 8300;    -- LI   R3, 0
+00FB : E300;    -- ADD  R3, R4
+00FC : CC50;    -- CMP  R4, R1
+00FD : B802;    -- BE   SUM_DONE
+00FE : 8C01;    -- ADDI R4, 1
+00FF : A0FB;    -- B    SUM_LOOP
+0100 : D860;    -- MOV  R0, R3
+0101 : A078;    -- B    SAVE_RESULT
+0102 : 9802;    -- CMPI R0, 2
+0103 : B912;    -- BLT  PRIME_FALSE
+0104 : 9802;    -- CMPI R0, 2
+0105 : B80E;    -- BE   PRIME_TRUE
+0106 : 8402;    -- LI   R4, 2
+0107 : C450;    -- CMP  R4, R0
+0108 : B80B;    -- BE   PRIME_TRUE
+0109 : B901;    -- BLT  PRIME_CHECK_DIVISIBLE
+010A : A009;    -- B    PRIME_TRUE
+010B : C360;    -- MOV  R3, R0
+010C : E350;    -- CMP  R3, R4
+010D : B902;    -- BLT  PRIME_NOT_DIVISIBLE
+010E : E310;    -- SUB  R3, R4
+010F : A0FC;    -- B    PRIME_REM_LOOP
+0110 : 9B00;    -- CMPI R3, 0
+0111 : B804;    -- BE   PRIME_FALSE
+0112 : 8C01;    -- ADDI R4, 1
+0113 : A0F3;    -- B    PRIME_D_LOOP
+0114 : 8001;    -- LI   R0, 1
+0115 : A064;    -- B    SAVE_RESULT
+0116 : 8000;    -- LI   R0, 0
+0117 : A062;    -- B    SAVE_RESULT
+0118 : 9800;    -- CMPI R0, 0
+0119 : B96C;    -- BLT  INVALID_ARG
+011A : 9800;    -- CMPI R0, 0
+011B : B80F;    -- BE   FIBO_ZERO
+011C : 9801;    -- CMPI R0, 1
+011D : B80F;    -- BE   FIBO_ONE
+011E : 8100;    -- LI   R1, 0
+011F : 8301;    -- LI   R3, 1
+0120 : 8401;    -- LI   R4, 1
+0121 : C450;    -- CMP  R4, R0
+0122 : B806;    -- BE   FIBO_DONE
+0123 : CD60;    -- MOV  R5, R1
+0124 : DD00;    -- ADD  R5, R3
+0125 : D960;    -- MOV  R1, R3
+0126 : EB60;    -- MOV  R3, R5
+0127 : 8C01;    -- ADDI R4, 1
+0128 : A0F8;    -- B    FIBO_LOOP
+0129 : D860;    -- MOV  R0, R3
+012A : A04F;    -- B    SAVE_RESULT
+012B : 8000;    -- LI   R0, 0
+012C : A04D;    -- B    SAVE_RESULT
+012D : 8001;    -- LI   R0, 1
+012E : A04B;    -- B    SAVE_RESULT
+012F : 9801;    -- CMPI R0, 1
+0130 : B955;    -- BLT  INVALID_ARG
+0131 : 8101;    -- LI   R1, 1
+0132 : 8300;    -- LI   R3, 0
+0133 : 8901;    -- ADDI R1, 1
+0134 : 9902;    -- CMPI R1, 2
+0135 : B914;    -- BLT  PRIME_N_NOT_PRIME
+0136 : 9902;    -- CMPI R1, 2
+0137 : B80E;    -- BE   PRIME_N_IS_PRIME
+0138 : 8402;    -- LI   R4, 2
+0139 : CC50;    -- CMP  R4, R1
+013A : B80B;    -- BE   PRIME_N_IS_PRIME
+013B : B901;    -- BLT  PRIME_N_CHECK_DIVISIBLE
+013C : A009;    -- B    PRIME_N_IS_PRIME
+013D : CD60;    -- MOV  R5, R1
+013E : E550;    -- CMP  R5, R4
+013F : B902;    -- BLT  PRIME_N_NOT_DIVISIBLE
+0140 : E510;    -- SUB  R5, R4
+0141 : A0FC;    -- B    PRIME_N_REM_LOOP
+0142 : 9D00;    -- CMPI R5, 0
+0143 : B806;    -- BE   PRIME_N_NOT_PRIME
+0144 : 8C01;    -- ADDI R4, 1
+0145 : A0F3;    -- B    PRIME_N_D_LOOP
+0146 : 8B01;    -- ADDI R3, 1
+0147 : C350;    -- CMP  R3, R0
+0148 : B802;    -- BE   PRIME_N_DONE
+0149 : A0E9;    -- B    PRIME_N_CANDIDATE_LOOP
+014A : A0E8;    -- B    PRIME_N_CANDIDATE_LOOP
+014B : C860;    -- MOV  R0, R1
+014C : A02D;    -- B    SAVE_RESULT
+014D : A0A2;    -- B    READ_OP_BACK_3
+014E : C1C0;    -- IN   R1
+014F : 9900;    -- CMPI R1, 0
+0150 : B920;    -- BLT  MEM_ADDR_INVALID
+0151 : 990F;    -- CMPI R1, 15
+0152 : BA01;    -- BLE  MEM_ADDR_OK
+0153 : A01D;    -- B    MEM_ADDR_INVALID
+0154 : 8910;    -- ADDI R1, 16
+0155 : 9A0C;    -- CMPI R2, 12
+0156 : B809;    -- BE   MEM_STORE
+0157 : 9A0D;    -- CMPI R2, 13
+0158 : B809;    -- BE   MEM_RECALL
+0159 : 9A0E;    -- CMPI R2, 14
+015A : B809;    -- BE   MEM_ADD
+015B : 9A0F;    -- CMPI R2, 15
+015C : B80C;    -- BE   MEM_SUB
+015D : 9A10;    -- CMPI R2, 16
+015E : B80F;    -- BE   MEM_CLEAR
+015F : A022;    -- B    INVALID_OP
+0160 : 4100;    -- ST   R0, 0(R1)
+0161 : A013;    -- B    MEM_SAVE_RESULT
+0162 : 0100;    -- LD   R0, 0(R1)
+0163 : A011;    -- B    MEM_SAVE_RESULT
+0164 : 1900;    -- LD   R3, 0(R1)
+0165 : C300;    -- ADD  R3, R0
+0166 : 5900;    -- ST   R3, 0(R1)
+0167 : D860;    -- MOV  R0, R3
+0168 : A00C;    -- B    MEM_SAVE_RESULT
+0169 : 1900;    -- LD   R3, 0(R1)
+016A : C310;    -- SUB  R3, R0
+016B : 5900;    -- ST   R3, 0(R1)
+016C : D860;    -- MOV  R0, R3
+016D : A007;    -- B    MEM_SAVE_RESULT
+016E : 8300;    -- LI   R3, 0
+016F : 5900;    -- ST   R3, 0(R1)
+0170 : A004;    -- B    MEM_SAVE_RESULT
+0171 : 8504;    -- LI   R5, 4
+0172 : 6E02;    -- ST   R5, 2(R6)
+0173 : E8D0;    -- OUT  R5
+0174 : C0F0;    -- HLT
+0175 : 8500;    -- LI   R5, 0
+0176 : 6E02;    -- ST   R5, 2(R6)
+0177 : 4600;    -- ST   R0, 0(R6)
+0178 : C0D0;    -- OUT  R0
+0179 : A0D3;    -- B    READ_OP_BACK_4
+017A : 8500;    -- LI   R5, 0
+017B : 6E02;    -- ST   R5, 2(R6)
+017C : 4600;    -- ST   R0, 0(R6)
+017D : C0D0;    -- OUT  R0
+017E : A0CE;    -- B    READ_OP_BACK_4
+017F : 4600;    -- ST   R0, 0(R6)
+0180 : C0D0;    -- OUT  R0
+0181 : C0F0;    -- HLT
+0182 : 8501;    -- LI   R5, 1
+0183 : 6E02;    -- ST   R5, 2(R6)
+0184 : E8D0;    -- OUT  R5
+0185 : C0F0;    -- HLT
+0186 : 8503;    -- LI   R5, 3
+0187 : 6E02;    -- ST   R5, 2(R6)
+0188 : E8D0;    -- OUT  R5
+0189 : C0F0;    -- HLT
+[018A..3FFF] : 0000;
+END;

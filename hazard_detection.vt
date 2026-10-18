@@ -1,0 +1,62 @@
+`timescale 1ns / 1ps
+
+module hazard_detection_tb;
+    reg is_ld_ex;
+    reg szcv_update_enable_ex;
+    reg [2:0] ex_dest_addr;
+    reg [15:0] instruction_id;
+    wire hazard_detected;
+
+    hazard_detection uut (
+        .is_ld_ex(is_ld_ex),
+        .szcv_update_enable_ex(szcv_update_enable_ex),
+        .ex_dest_addr(ex_dest_addr),
+        .instruction_id(instruction_id),
+        .hazard_detected(hazard_detected)
+    );
+
+    task check_hazard;
+        input expected;
+        input [127:0] label;
+        begin
+            #1;
+            if (hazard_detected !== expected) begin
+                $display("FAIL: %s expected=%b actual=%b", label, expected, hazard_detected);
+                $finish;
+            end
+        end
+    endtask
+
+    initial begin
+        is_ld_ex = 1'b0;
+        szcv_update_enable_ex = 1'b0;
+        ex_dest_addr = 3'd0;
+        instruction_id = 16'h0000;
+
+        check_hazard(1'b0, "NOP");
+
+        // LD R1, ... in EX, ADD ..., R1 in ID.
+        is_ld_ex = 1'b1;
+        ex_dest_addr = 3'd1;
+        instruction_id = {2'b11, 3'd1, 3'd2, 4'b0000, 4'b0000};
+        check_hazard(1'b1, "LD-use");
+
+        // ALU/CMP-like flag update in EX, conditional branch in ID.
+        is_ld_ex = 1'b0;
+        szcv_update_enable_ex = 1'b1;
+        instruction_id = {2'b10, 3'b111, 3'b000, 8'h00};
+        check_hazard(1'b1, "SZCV-use branch");
+
+        // Unconditional branch does not read SZCV.
+        instruction_id = {2'b10, 3'b100, 11'h000};
+        check_hazard(1'b0, "unconditional branch");
+
+        // Conditional branch is safe when EX is not updating SZCV.
+        szcv_update_enable_ex = 1'b0;
+        instruction_id = {2'b10, 3'b111, 3'b000, 8'h00};
+        check_hazard(1'b0, "branch after non-flag op");
+
+        $display("PASS");
+        $finish;
+    end
+endmodule

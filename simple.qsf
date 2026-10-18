@@ -1,0 +1,249 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2020  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and any partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details, at
+# https://fpgasoftware.intel.com/eula.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 20.1.0 Build 711 06/05/2020 Patches 0.02i SJ Lite Edition
+# Date created = 17:01:48  April 16, 2026
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		simple_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE30F23I7
+set_global_assignment -name TOP_LEVEL_ENTITY top_module
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION "20.1.0 SP0.02I"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "17:01:48  APRIL 16, 2026"
+set_global_assignment -name LAST_QUARTUS_VERSION "20.1.0 Standard Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP "-40"
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 100
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name NOMINAL_CORE_SUPPLY_VOLTAGE 1.2V
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
+set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_timing
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_symbol
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_signal_integrity
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_board_design_boundary_scan
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name EDA_TEST_BENCH_ENABLE_STATUS TEST_BENCH_MODE -section_id eda_simulation
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_TEST_BENCH pipelined_processor_top_tb -section_id eda_simulation
+set_global_assignment -name EDA_TEST_BENCH_NAME tb_phase_counter -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id tb_phase_counter
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME tb_phase_counter -section_id tb_phase_counter
+set_global_assignment -name EDA_TEST_BENCH_NAME tb_decoder -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id tb_decoder
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME tb_decoder -section_id tb_decoder
+set_global_assignment -name EDA_TEST_BENCH_NAME tb_processor_top -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id tb_processor_top
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME tb_processor_top -section_id tb_processor_top
+set_global_assignment -name PROJECT_IP_REGENERATION_POLICY ALWAYS_REGENERATE_IP
+set_global_assignment -name IP_SEARCH_PATHS "d:\\ex3hw\\ex2\\simple-2026-team13\\piplined"
+set_global_assignment -name EDA_TEST_BENCH_NAME pipelined_processor_top_tb -section_id eda_simulation
+set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id pipelined_processor_top_tb
+set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME pipelined_processor_top_tb -section_id pipelined_processor_top_tb
+set_location_assignment PIN_B12 -to clk
+set_location_assignment PIN_A12 -to sel_clk
+set_location_assignment PIN_A16 -to rst
+set_location_assignment PIN_A17 -to exec
+set_location_assignment PIN_A18 -to input_enter
+set_location_assignment PIN_E15 -to keypad_keys[0]
+set_location_assignment PIN_F15 -to keypad_keys[1]
+set_location_assignment PIN_G15 -to keypad_keys[2]
+set_location_assignment PIN_H15 -to keypad_keys[3]
+set_location_assignment PIN_B16 -to keypad_keys[4]
+set_location_assignment PIN_E16 -to keypad_keys[5]
+set_location_assignment PIN_F16 -to keypad_keys[6]
+set_location_assignment PIN_G16 -to keypad_keys[7]
+set_location_assignment PIN_B17 -to keypad_keys[8]
+set_location_assignment PIN_C17 -to keypad_keys[9]
+set_location_assignment PIN_D17 -to keypad_keys[10]
+set_location_assignment PIN_A19 -to keypad_keys[11]
+set_location_assignment PIN_B19 -to keypad_keys[12]
+set_location_assignment PIN_A8 -to wait_for_input
+set_location_assignment PIN_B5 -to main_seg_a_out[0]
+set_location_assignment PIN_A4 -to main_seg_a_out[1]
+set_location_assignment PIN_B3 -to main_seg_a_out[2]
+set_location_assignment PIN_B4 -to main_seg_a_out[3]
+set_location_assignment PIN_A5 -to main_seg_a_out[4]
+set_location_assignment PIN_A6 -to main_seg_a_out[5]
+set_location_assignment PIN_B6 -to main_seg_a_out[6]
+set_location_assignment PIN_A3 -to main_seg_a_out[7]
+set_location_assignment PIN_D7 -to main_seg_b_out[0]
+set_location_assignment PIN_A7 -to main_seg_b_out[1]
+set_location_assignment PIN_D6 -to main_seg_b_out[2]
+set_location_assignment PIN_B7 -to main_seg_b_out[3]
+set_location_assignment PIN_C7 -to main_seg_b_out[4]
+set_location_assignment PIN_E7 -to main_seg_b_out[5]
+set_location_assignment PIN_F7 -to main_seg_b_out[6]
+set_location_assignment PIN_C6 -to main_seg_b_out[7]
+set_location_assignment PIN_E6 -to main_seg_sel[0]
+set_location_assignment PIN_E5 -to main_seg_sel[1]
+set_location_assignment PIN_C4 -to main_seg_sel[2]
+set_location_assignment PIN_C3 -to main_seg_sel[3]
+set_location_assignment PIN_G7 -to main_seg_sel[4]
+set_location_assignment PIN_G8 -to main_seg_sel[5]
+set_location_assignment PIN_G9 -to main_seg_sel[6]
+set_location_assignment PIN_H10 -to main_seg_sel[7]
+set_location_assignment PIN_AA3 -to seg_a_out[0]
+set_location_assignment PIN_V5 -to seg_a_out[1]
+set_location_assignment PIN_AA4 -to seg_a_out[2]
+set_location_assignment PIN_AA5 -to seg_a_out[3]
+set_location_assignment PIN_AB4 -to seg_a_out[4]
+set_location_assignment PIN_W6 -to seg_a_out[5]
+set_location_assignment PIN_AB5 -to seg_a_out[6]
+set_location_assignment PIN_Y6 -to seg_a_out[7]
+set_location_assignment PIN_V6 -to seg_b_out[0]
+set_location_assignment PIN_W7 -to seg_b_out[1]
+set_location_assignment PIN_U7 -to seg_b_out[2]
+set_location_assignment PIN_Y7 -to seg_b_out[3]
+set_location_assignment PIN_V7 -to seg_b_out[4]
+set_location_assignment PIN_T8 -to seg_b_out[5]
+set_location_assignment PIN_AA7 -to seg_b_out[6]
+set_location_assignment PIN_U8 -to seg_b_out[7]
+set_location_assignment PIN_AB7 -to seg_c_out[0]
+set_location_assignment PIN_Y8 -to seg_c_out[1]
+set_location_assignment PIN_V8 -to seg_c_out[2]
+set_location_assignment PIN_AA8 -to seg_c_out[3]
+set_location_assignment PIN_W8 -to seg_c_out[4]
+set_location_assignment PIN_U9 -to seg_c_out[5]
+set_location_assignment PIN_AB8 -to seg_c_out[6]
+set_location_assignment PIN_V9 -to seg_c_out[7]
+set_location_assignment PIN_T9 -to seg_d_out[0]
+set_location_assignment PIN_U10 -to seg_d_out[1]
+set_location_assignment PIN_AA9 -to seg_d_out[2]
+set_location_assignment PIN_V10 -to seg_d_out[3]
+set_location_assignment PIN_AB9 -to seg_d_out[4]
+set_location_assignment PIN_AA10 -to seg_d_out[5]
+set_location_assignment PIN_W10 -to seg_d_out[6]
+set_location_assignment PIN_AB10 -to seg_d_out[7]
+set_location_assignment PIN_Y10 -to seg_e_out[0]
+set_location_assignment PIN_T12 -to seg_e_out[1]
+set_location_assignment PIN_U11 -to seg_e_out[2]
+set_location_assignment PIN_U12 -to seg_e_out[3]
+set_location_assignment PIN_V11 -to seg_e_out[4]
+set_location_assignment PIN_U13 -to seg_e_out[5]
+set_location_assignment PIN_V12 -to seg_e_out[6]
+set_location_assignment PIN_V13 -to seg_e_out[7]
+set_location_assignment PIN_T13 -to seg_f_out[0]
+set_location_assignment PIN_AA13 -to seg_f_out[1]
+set_location_assignment PIN_W13 -to seg_f_out[2]
+set_location_assignment PIN_AB13 -to seg_f_out[3]
+set_location_assignment PIN_Y13 -to seg_f_out[4]
+set_location_assignment PIN_U14 -to seg_f_out[5]
+set_location_assignment PIN_R14 -to seg_f_out[6]
+set_location_assignment PIN_V14 -to seg_f_out[7]
+set_location_assignment PIN_T14 -to seg_g_out[0]
+set_location_assignment PIN_AB14 -to seg_g_out[1]
+set_location_assignment PIN_W14 -to seg_g_out[2]
+set_location_assignment PIN_R15 -to seg_g_out[3]
+set_location_assignment PIN_AA14 -to seg_g_out[4]
+set_location_assignment PIN_V15 -to seg_g_out[5]
+set_location_assignment PIN_T15 -to seg_g_out[6]
+set_location_assignment PIN_W15 -to seg_g_out[7]
+set_location_assignment PIN_U15 -to seg_h_out[0]
+set_location_assignment PIN_R16 -to seg_h_out[1]
+set_location_assignment PIN_AA15 -to seg_h_out[2]
+set_location_assignment PIN_T16 -to seg_h_out[3]
+set_location_assignment PIN_AB15 -to seg_h_out[4]
+set_location_assignment PIN_AA16 -to seg_h_out[5]
+set_location_assignment PIN_U16 -to seg_h_out[6]
+set_location_assignment PIN_AB16 -to seg_h_out[7]
+set_location_assignment PIN_V16 -to seg_sel[0]
+set_location_assignment PIN_AA17 -to seg_sel[1]
+set_location_assignment PIN_W17 -to seg_sel[2]
+set_location_assignment PIN_AB17 -to seg_sel[3]
+set_location_assignment PIN_Y17 -to seg_sel[4]
+set_location_assignment PIN_AB19 -to seg_sel[5]
+set_location_assignment PIN_AA18 -to seg_sel[6]
+set_location_assignment PIN_AA19 -to seg_sel[7]
+set_location_assignment PIN_AB18 -to seg_sel[8]
+set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE PERFORMANCE"
+set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC_FOR_AREA ON
+set_global_assignment -name PHYSICAL_SYNTHESIS_EFFORT EXTRA
+set_global_assignment -name VERILOG_FILE top_module.v
+set_global_assignment -name VERILOG_FILE main_seg_display.v
+set_global_assignment -name VERILOG_FILE signed_decimal_8digits.v
+set_global_assignment -name VERILOG_FILE keypad_decimal_input.v
+set_global_assignment -name VERILOG_FILE seg7_reg_display.v
+set_global_assignment -name VERILOG_FILE seg7_snoop_display.v
+set_global_assignment -name VERILOG_FILE seg7decoder.v
+set_global_assignment -name VERILOG_FILE debouncer.v
+set_global_assignment -name VERILOG_FILE predictor.v
+set_global_assignment -name VERILOG_FILE hazard_detection.v
+set_global_assignment -name VERILOG_FILE piplined/run_state_module.v
+set_global_assignment -name VERILOG_FILE piplined/reg_if.v
+set_global_assignment -name VERILOG_FILE piplined/reg_IFID.v
+set_global_assignment -name VERILOG_FILE piplined/reg_IDEX.v
+set_global_assignment -name VERILOG_FILE piplined/reg_exmem.v
+set_global_assignment -name VERILOG_FILE piplined/reg_memwb.v
+set_global_assignment -name VERILOG_FILE piplined/pipelined_processor_top.v
+set_global_assignment -name VERILOG_FILE piplined/pipelined_pc.v
+set_global_assignment -name VERILOG_FILE piplined/id.v
+set_global_assignment -name VERILOG_FILE piplined/fowarding_unit.v
+set_global_assignment -name VERILOG_FILE reg_file.v
+set_global_assignment -name SDC_FILE simple.sdc
+set_global_assignment -name VERILOG_FILE reg_szcv.v
+set_global_assignment -name VERILOG_FILE calculator.v
+set_global_assignment -name VERILOG_FILE shifter.v
+set_global_assignment -name VERILOG_FILE alu.v
+set_global_assignment -name VERILOG_FILE 4digit.v
+set_global_assignment -name VERILOG_FILE sort_performance_counter.v
+set_global_assignment -name VERILOG_FILE inst_main_memory.v
+set_global_assignment -name VERILOG_FILE inst_mainmemory.v
+set_global_assignment -name VERILOG_FILE data_main_memory.v
+set_global_assignment -name MIF_FILE calculator.mif
+set_global_assignment -name MIF_FILE random_data.mif
+set_global_assignment -name MIF_FILE radixsort_inst.mif
+set_global_assignment -name MIF_FILE radixsort_8bit_v4.mif
+set_global_assignment -name MIF_FILE sorted_data.mif
+set_global_assignment -name ROUTER_REGISTER_DUPLICATION ON
+set_global_assignment -name SEED 2
+set_global_assignment -name PHYSICAL_SYNTHESIS_REGISTER_DUPLICATION ON
+
+set_global_assignment -name EDA_TEST_BENCH_FILE phase_counter.vt -section_id tb_phase_counter
+set_global_assignment -name EDA_TEST_BENCH_FILE decoder.vt -section_id tb_decoder
+set_global_assignment -name EDA_TEST_BENCH_FILE processor_top.vt -section_id tb_processor_top
+set_global_assignment -name EDA_TEST_BENCH_FILE piplined/pipelined_processor_top_tb.v -section_id pipelined_processor_top_tb
+
+
+
+set_global_assignment -name QIP_FILE my_pll.qip
+
+
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name ROUTER_EFFORT_MULTIPLIER 4.0
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

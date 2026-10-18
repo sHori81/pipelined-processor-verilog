@@ -1,0 +1,108 @@
+// Copyright (C) 2020  Intel Corporation. All rights reserved.
+// Your use of Intel Corporation's design tools, logic functions 
+// and other software and tools, and any partner logic 
+// functions, and any output files from any of the foregoing 
+// (including device programming or simulation files), and any 
+// associated documentation or information are expressly subject 
+// to the terms and conditions of the Intel Program License 
+// Subscription Agreement, the Intel Quartus Prime License Agreement,
+// the Intel FPGA IP License Agreement, or other applicable license
+// agreement, including, without limitation, that your use is for
+// the sole purpose of programming logic devices manufactured by
+// Intel and sold by Intel or its authorized distributors.  Please
+// refer to the applicable agreement for further details, at
+// https://fpgasoftware.intel.com/eula.
+
+// *****************************************************************************
+// This file contains a Verilog test bench template that is freely editable to  
+// suit user's needs .Comments are provided in each section to help the user    
+// fill out necessary details.                                                  
+// *****************************************************************************
+// Generated on "04/17/2026 14:17:33"
+                                                                                
+// Verilog Test Bench template for design : ph2
+// 
+// Simulation tool : ModelSim-Altera (Verilog)
+// 
+
+`timescale 1 ps/ 1 ps
+module ph2_vlg_tst();
+// constants                                           
+// general purpose registers
+reg eachvec;
+// test vector input registers
+reg clk;
+reg [15:0] ir_input;
+reg load;
+reg rst;
+// wires                                               
+wire [2:0]  cond;
+wire [15:0]  data_a;
+wire [15:0]  data_b;
+wire [3:0]  dif4;
+wire [7:0]  dif8;
+wire [1:0]  op1;
+wire [2:0]  op2;
+wire [3:0]  op3;
+
+// assign statements (if any)                          
+ph2 i1 (
+// port map - connection between master ports and signals/registers   
+	.clk(clk),
+	.cond(cond),
+	.data_a(data_a),
+	.data_b(data_b),
+	.dif4(dif4),
+	.dif8(dif8),
+	.ir_input(ir_input),
+	.load(load),
+	.op1(op1),
+	.op2(op2),
+	.op3(op3),
+	.rst(rst)
+);
+initial                                                
+begin                                                  
+// code that executes only once                        
+// insert code here --> begin                          
+	clk <= 0;
+	rst <= 0;
+	load <= 0;
+	ir_input <= 16'd0;                
+// --> end                                             
+$display("Running testbench");                       
+end                                                    
+always                                                 
+// optional sensitivity list                           
+// @(event1 or event2 or .... eventn)                  
+begin                                                  
+// code executes for every event on sensitivity list   
+// insert code here --> begin                          
+#10 
+rst <= 1;
+load <= 1;
+#50
+ir_input <= 16'b00_000_001_0000_0000;
+#50
+ir_input <= 16'b01_010_011_0101_0101;
+#50
+ir_input <= 16'b10_100_101_1010_1010;
+#50
+ir_input <= 16'b11_110_111_1111_1111;
+#50
+load <= 0;
+#50
+ir_input <= 16'b00_000_001_0000_0000;
+
+
+
+//@eachvec;                                              
+// --> end                                             
+end
+
+always begin
+#10
+	clk = ~clk;
+end
+endmodule
+

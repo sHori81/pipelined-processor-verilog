@@ -1,0 +1,186 @@
+DEPTH = 32768;
+WIDTH = 16;
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+BEGIN
+
+0000 : B204;    -- LUI R2, 0x04
+0001 : B308;    -- LUI R3, 0x08
+0002 : 8601;    -- LI  R6, 1
+0003 : 8701;    -- LI  R7, 1
+0004 : 2200;    -- LD  R4, 0(R2)
+0005 : 0000;    -- NOP
+0006 : 8A01;    -- ADDI R2, 1
+0007 : DA50;    -- CMP R2, R3
+0008 : 0000;    -- NOP
+0009 : B812;    -- BE  check_done
+000A : 2A00;    -- LD  R5, 0(R2)
+000B : 0000;    -- NOP
+000C : EC50;    -- CMP R4, R5
+000D : 0000;    -- NOP
+000E : B80A;    -- BE  skip_flags
+000F : B902;    -- BLT prev_less_curr
+0010 : 8600;    -- LI  R6, 0
+0011 : A001;    -- B   check_both
+0012 : 8700;    -- LI  R7, 0
+0013 : C160;    -- MOV R1, R0
+0014 : F100;    -- ADD R1, R6
+0015 : F900;    -- ADD R1, R7
+0016 : C150;    -- CMP R1, R0
+0017 : 0000;    -- NOP
+0018 : B81B;    -- BE  radix_sort_start
+0019 : EC60;    -- MOV R4, R5
+001A : 8A01;    -- ADDI R2, 1
+001B : A0EB;    -- B   check_loop
+001C : C650;    -- CMP R6, R0
+001D : 0000;    -- NOP
+001E : B801;    -- BE  check_desc_and_reverse
+001F : C0F0;    -- HLT
+0020 : B204;    -- LUI R2, 0x04
+0021 : B307;    -- LUI R3, 0x07
+0022 : 817F;    -- LI  R1, 0x7F
+0023 : 897F;    -- ADDI R1, 0x7F
+0024 : 8901;    -- ADDI R1, 1
+0025 : CB00;    -- ADD R3, R1
+0026 : 8101;    -- LI  R1, 1
+0027 : D350;    -- CMP R3, R2
+0028 : 0000;    -- NOP
+0029 : BA09;    -- BLE rev_done
+002A : 2200;    -- LD  R4, 0(R2)
+002B : 0000;    -- NOP
+002C : 2B00;    -- LD  R5, 0(R3)
+002D : 0000;    -- NOP
+002E : 6A00;    -- ST  R5, 0(R2)
+002F : 6300;    -- ST  R4, 0(R3)
+0030 : 8A01;    -- ADDI R2, 1
+0031 : CB10;    -- SUB R3, R1
+0032 : A0F4;    -- B   rev_loop
+0033 : C0F0;    -- HLT
+0034 : 8401;    -- LI R4, 1
+0035 : C488;    -- SLL R4, 8
+0036 : 877F;    -- LI R7, 0x7F
+0037 : 8F7F;    -- ADDI R7, 0x7F
+0038 : 8F01;    -- ADDI R7, 1
+0039 : E260;    -- MOV R2, R4
+003A : 8302;    -- LI R3, 2
+003B : C388;    -- SLL R3, 8
+003C : 4200;    -- ST R0, 0(R2)
+003D : 8A01;    -- ADDI R2, 1
+003E : DA50;    -- CMP R2, R3
+003F : 0000;    -- NOP
+0040 : BBFB;    -- BNE init_buckets_1
+0041 : B204;    -- LUI R2, 0x04
+0042 : B308;    -- LUI R3, 0x08
+0043 : 2A00;    -- LD R5, 0(R2)
+0044 : 0000;    -- NOP
+0045 : EE60;    -- MOV R6, R5
+0046 : FE20;    -- AND R6, R7
+0047 : E600;    -- ADD R6, R4
+0048 : 0E00;    -- LD R1, 0(R6)
+0049 : 0000;    -- NOP
+004A : 8901;    -- ADDI R1, 1
+004B : 4E00;    -- ST R1, 0(R6)
+004C : 8A01;    -- ADDI R2, 1
+004D : DA50;    -- CMP R2, R3
+004E : 0000;    -- NOP
+004F : BBF3;    -- BNE loop_hist_1
+0050 : B108;    -- LUI R1, 0x08
+0051 : E260;    -- MOV R2, R4
+0052 : 8302;    -- LI R3, 2
+0053 : C388;    -- SLL R3, 8
+0054 : 2A00;    -- LD R5, 0(R2)
+0055 : 0000;    -- NOP
+0056 : 4A00;    -- ST R1, 0(R2)
+0057 : E900;    -- ADD R1, R5
+0058 : 8A01;    -- ADDI R2, 1
+0059 : DA50;    -- CMP R2, R3
+005A : 0000;    -- NOP
+005B : BBF8;    -- BNE loop_sum_1
+005C : B204;    -- LUI R2, 0x04
+005D : B308;    -- LUI R3, 0x08
+005E : 2A00;    -- LD R5, 0(R2)
+005F : 0000;    -- NOP
+0060 : EE60;    -- MOV R6, R5
+0061 : FE20;    -- AND R6, R7
+0062 : E600;    -- ADD R6, R4
+0063 : 0E00;    -- LD R1, 0(R6)
+0064 : 0000;    -- NOP
+0065 : 6900;    -- ST R5, 0(R1)
+0066 : 8901;    -- ADDI R1, 1
+0067 : 4E00;    -- ST R1, 0(R6)
+0068 : 8A01;    -- ADDI R2, 1
+0069 : DA50;    -- CMP R2, R3
+006A : 0000;    -- NOP
+006B : BBF2;    -- BNE loop_dist_1
+006C : E260;    -- MOV R2, R4
+006D : 8302;    -- LI R3, 2
+006E : C388;    -- SLL R3, 8
+006F : 4200;    -- ST R0, 0(R2)
+0070 : 8A01;    -- ADDI R2, 1
+0071 : DA50;    -- CMP R2, R3
+0072 : 0000;    -- NOP
+0073 : BBFB;    -- BNE init_buckets_2
+0074 : B208;    -- LUI R2, 0x08
+0075 : B30C;    -- LUI R3, 0x0C
+0076 : 2A00;    -- LD R5, 0(R2)
+0077 : 0000;    -- NOP
+0078 : EE60;    -- MOV R6, R5
+0079 : C6A8;    -- SRL R6, 8
+007A : FE20;    -- AND R6, R7
+007B : E600;    -- ADD R6, R4
+007C : 0E00;    -- LD R1, 0(R6)
+007D : 0000;    -- NOP
+007E : 8901;    -- ADDI R1, 1
+007F : 4E00;    -- ST R1, 0(R6)
+0080 : 8A01;    -- ADDI R2, 1
+0081 : DA50;    -- CMP R2, R3
+0082 : 0000;    -- NOP
+0083 : BBF2;    -- BNE loop_hist_2
+0084 : B104;    -- LUI R1, 0x04
+0085 : 8501;    -- LI R5, 1
+0086 : C587;    -- SLL R5, 7
+0087 : E260;    -- MOV R2, R4
+0088 : EA00;    -- ADD R2, R5
+0089 : 8302;    -- LI R3, 2
+008A : C388;    -- SLL R3, 8
+008B : 3200;    -- LD R6, 0(R2)
+008C : 0000;    -- NOP
+008D : 4A00;    -- ST R1, 0(R2)
+008E : F100;    -- ADD R1, R6
+008F : 8A01;    -- ADDI R2, 1
+0090 : DA50;    -- CMP R2, R3
+0091 : 0000;    -- NOP
+0092 : BBF8;    -- BNE loop_sum_neg
+0093 : E260;    -- MOV R2, R4
+0094 : E360;    -- MOV R3, R4
+0095 : EB00;    -- ADD R3, R5
+0096 : 3200;    -- LD R6, 0(R2)
+0097 : 0000;    -- NOP
+0098 : 4A00;    -- ST R1, 0(R2)
+0099 : F100;    -- ADD R1, R6
+009A : 8A01;    -- ADDI R2, 1
+009B : DA50;    -- CMP R2, R3
+009C : 0000;    -- NOP
+009D : BBF8;    -- BNE loop_sum_pos
+009E : B208;    -- LUI R2, 0x08
+009F : B30C;    -- LUI R3, 0x0C
+00A0 : 2A00;    -- LD R5, 0(R2)
+00A1 : 0000;    -- NOP
+00A2 : EE60;    -- MOV R6, R5
+00A3 : C6A8;    -- SRL R6, 8
+00A4 : FE20;    -- AND R6, R7
+00A5 : E600;    -- ADD R6, R4
+00A6 : 0E00;    -- LD R1, 0(R6)
+00A7 : 0000;    -- NOP
+00A8 : 6900;    -- ST R5, 0(R1)
+00A9 : 8901;    -- ADDI R1, 1
+00AA : 4E00;    -- ST R1, 0(R6)
+00AB : 8A01;    -- ADDI R2, 1
+00AC : DA50;    -- CMP R2, R3
+00AD : 0000;    -- NOP
+00AE : BBF1;    -- BNE loop_dist_2
+00AF : C0F0;    -- HLT
+[00B0..7FFF] : 0000;
+END;

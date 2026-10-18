@@ -1,0 +1,74 @@
+`timescale 1ns / 1ps
+
+module tb_phase_counter;
+
+    // Inputs
+    reg clk;
+    reg rst;
+    reg exec;
+
+    // Outputs
+    wire p1, p2, p3, p4, p5;
+
+    // Instantiate the Unit Under Test (UUT)
+    phase_counter uut (
+        .clk(clk), 
+        .rst(rst), 
+        .exec(exec), 
+        .p1(p1), .p2(p2), .p3(p3), .p4(p4), .p5(p5)
+    );
+
+    // Clock generation (20MHz = 50ns period)
+    always #25 clk = ~clk;
+
+    initial begin
+        // --- 初期設定 ---
+        clk = 0;
+        rst = 0; // リセット（アクティブロー） [cite: 188]
+        exec = 0;
+
+        $display("--- Starting phase_counter (SIMPLE/B) Test ---");
+
+        // 1. リセット解除
+        #60 rst = 1;
+        $display("Time=%0t | Reset released. Phase=%d, Run=Stop", $time, uut.phase);
+
+        // 2. 起動 (exec: 0 -> 1)
+        #100 exec = 1;
+        #50  exec = 0;
+        $display("Time=%0t | EXEC button pressed. Starting...", $time);
+
+        // 1命令分（p1~p5）回るのを確認
+        wait(p1); $display("Time=%0t | Phase p1 active", $time);
+        wait(p2); $display("Time=%0t | Phase p2 active", $time);
+        wait(p3); $display("Time=%0t | Phase p3 active", $time);
+        wait(p4); $display("Time=%0t | Phase p4 active", $time);
+        wait(p5); $display("Time=%0t | Phase p5 active", $time);
+
+        // 3. 実行中に停止指示 (exec: 0 -> 1)
+        // p2のタイミングで停止ボタンを押してみる
+        wait(p2);
+        #10 exec = 1;
+        #50 exec = 0;
+        $display("Time=%0t | HALT requested via exec button during p2.", $time);
+
+        // 仕様：実行中の命令を完了してから停止する 
+        wait(p5);
+        $display("Time=%0t | p5 completed. Checking if it stops at next p1...", $time);
+        
+        #100;
+        if (p1 && uut.phase == 3'b000)
+            $display("Time=%0t | Success: Counter stopped at p1.", $time);
+        else
+            $display("Time=%0t | Failure: Counter did not stop.", $time);
+
+        // 4. 再起動
+        #50 exec = 1;
+        #50 exec = 0;
+        $display("Time=%0t | Re-starting...", $time);
+        wait(p3);
+        $display("Time=%0t | Running again. p3 active.", $time);
+
+        #200 $finish;
+    end
+endmodule

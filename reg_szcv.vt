@@ -1,0 +1,59 @@
+`timescale 1ns / 1ps
+
+module tb_reg_szcv;
+
+    // Inputs
+    reg [3:0] data_szcv_in;
+    reg clk;
+    reg rst;
+    reg write_enable;
+
+    // Outputs
+    wire [3:0] data_szcv_out;
+
+    // Instantiate the Unit Under Test (UUT)
+    reg_szcv uut (
+        .data_szcv_in(data_szcv_in), 
+        .clk(clk), 
+        .rst(rst), 
+        .write_enable(write_enable), 
+        .data_szcv_out(data_szcv_out)
+    );
+
+    // Clock generation (20MHz = 50ns period)
+    always #25 clk = ~clk;
+
+    initial begin
+        // Initialize Inputs
+        clk = 0;
+        rst = 0; // Reset active (negative logic)
+        write_enable = 0;
+        data_szcv_in = 4'b0000;
+
+        $display("--- Starting reg_szcv Test ---");
+
+        // 1. Reset Release
+        #60 rst = 1;
+        $display("Time=%0t | Reset released. Output=%b", $time, data_szcv_out);
+
+        // 2. Write attempt without Enable
+        #50 data_szcv_in = 4'b1010; // S=1, C=1
+        write_enable = 0;
+        #50 $display("Time=%0t | Write attempt (EN=0): Input=%b, Output=%b (Expected: 0000)", $time, data_szcv_in, data_szcv_out);
+
+        // 3. Write with Enable
+        #50 write_enable = 1;
+        #50 $display("Time=%0t | Write attempt (EN=1): Input=%b, Output=%b (Expected: 1010)", $time, data_szcv_in, data_szcv_out);
+
+        // 4. Value Hold (EN=0 again)
+        #50 write_enable = 0;
+        data_szcv_in = 4'b0101; // Z=1, V=1
+        #50 $display("Time=%0t | Value Hold (EN=0): Input=%b, Output=%b (Expected: 1010)", $time, data_szcv_in, data_szcv_out);
+
+        // 5. Reset again
+        #50 rst = 0;
+        #50 $display("Time=%0t | Re-Reset: Output=%b (Expected: 0000)", $time, data_szcv_out);
+
+        #100 $finish;
+    end
+endmodule

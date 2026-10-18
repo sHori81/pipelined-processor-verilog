@@ -1,0 +1,100 @@
+`timescale 1ns / 1ps
+
+module tb_decoder;
+
+    // Inputs
+    reg [15:0] data_a, data_b, pc_in;
+    reg [1:0] op1;
+    reg [2:0] op2, cond;
+    reg [3:0] op3, diff_4bit;
+    reg [7:0] diff_8bit;
+    reg [3:0] data_szcv_in;
+
+    // Outputs
+    wire [15:0] data_output;
+    wire [3:0] data_szcv_out;
+
+    // Instantiate the Unit Under Test (UUT)
+    decoder uut (
+        .data_a(data_a), .data_b(data_b), .op1(op1), .op2(op2), .op3(op3),
+        .diff_4bit(diff_4bit), .diff_8bit(diff_8bit), .pc_in(pc_in),
+        .data_szcv_in(data_szcv_in), .cond(cond),
+        .data_output(data_output), .data_szcv_out(data_szcv_out)
+    );
+
+    initial begin
+        // 初期化
+        data_a = 0; data_b = 0; pc_in = 16'h1000;
+        op1 = 0; op2 = 0; op3 = 0;
+        diff_4bit = 0; diff_8bit = 0; data_szcv_in = 0; cond = 0;
+
+        $display("--- Starting SIMPLE Processor Decoder Test ---");
+
+        // --- 1. 算術・論理演算 (op1=2'b11) ---
+        // (1) ADD: r[Rd] = r[Rd] + r[Rs] -> 10 + 20 = 30
+        op1 = 2'b11; op3 = 4'b0000; data_b = 16'd10; data_a = 16'd20;
+        #10 $display("ADD:  Result=%d (Expected: 30)", data_output);
+
+        // (2) SUB: r[Rd] = r[Rd] - r[Rs] -> 50 - 20 = 30
+        op3 = 4'b0001; data_b = 16'd50; data_a = 16'd20;
+        #10 $display("SUB:  Result=%d (Expected: 30)", data_output);
+
+        // (3) AND: r[Rd] & r[Rs] -> 16'hF0F0 & 16'hFF00 = 16'hF000
+        op3 = 4'b0010; data_b = 16'hF0F0; data_a = 16'hFF00;
+        #10 $display("AND:  Result=%h (Expected: f000)", data_output);
+
+        // --- 2. シフト演算 (op1=2'b11, op3[3]=1) ---
+        // (1) SLL: 16'h0001 << 4 = 16'h0010
+        op3 = 4'b1000; data_b = 16'h0001; diff_4bit = 4;
+        #10 $display("SLL:  Result=%h (Expected: 0010)", data_output);
+
+        // (2) SRL: 16'h8000 >> 4 = 16'h0800
+        op3 = 4'b1010; data_b = 16'h8000; diff_4bit = 4;
+        #10 $display("SRL:  Result=%h (Expected: 0800)", data_output);
+
+        // (3) SRA: 16'h8000 >>> 4 = 16'hF800 (符号維持)
+        op3 = 4'b1011; data_b = 16'h8000; diff_4bit = 4;
+        #10 $display("SRA:  Result=%h (Expected: f800)", data_output);
+
+        // --- 3. ロード・ストア (op1=2'b00 / 01) ---
+        // (1) LD: address = r[Rb] + d -> 16'h2000 + 8 = 16'h2008
+        op1 = 2'b00; data_b = 16'h2000; diff_8bit = 8;
+        #10 $display("LD Addr: Result=%h (Expected: 2008)", data_output);
+
+        // (2) ST: address = r[Rb] + d -> 16'h3000 - 1 (FF) = 16'h2FFF
+        op1 = 2'b01; data_b = 16'h3000; diff_8bit = 8'hFF; // -1 as signed
+        #10 $display("ST Addr: Result=%h (Expected: 2fff)", data_output);
+
+        // --- 4. 即値ロード・分岐 (op1=2'b10) ---
+        // (1) LI: r[Rb] = sign_ext(d) -> -5 (16'hFFFB)
+        op1 = 2'b10; op2 = 3'b000; diff_8bit = 8'hFB;
+        #10 $display("LI:   Result=%h (Expected: fffb)", data_output);
+
+        // (2) B: PC = PC + 1 + d -> 1000 + 1 + 10 = 100b
+        op2 = 3'b100; pc_in = 16'h1000; diff_8bit = 8'd10;
+        #10 $display("B:    JumpAddr=%h (Expected: 100b)", data_output);
+
+        // (3) BE (Taken): Z=1の時、分岐先にジャンプ
+        op2 = 3'b111; cond = 3'b000; data_szcv_in = 4'b0100; // Z=1
+        #10 $display("BE(T): Result=%h (Expected: 100b)", data_output);
+
+        // (4) BE (Not Taken): Z=0の時、PC+1
+        data_szcv_in = 4'b0000; // Z=0
+        #10 $display("BE(N): Result=%h (Expected: 1001)", data_output);
+
+        // --- 5. 入出力・停止 (op1=2'b11, op3=1100-1111) ---
+        // (1) IN: Result should be 'input' (今回はALU経由のdata_aを通すと仮定)
+        op1 = 2'b11; op3 = 4'b1100; data_a = 16'hAAAA;
+        #10 $display("IN:   Result=%h (Expected: aaaa)", data_output);
+
+        // (2) OUT: Result should be r[Rs]
+        op3 = 4'b1101; data_a = 16'h5555;
+        #10 $display("OUT:  Result=%h (Expected: 5555)", data_output);
+
+        // (3) HLT: 結果に影響せず停止（シミュレーション終了の合図）
+        op3 = 4'b1111;
+        #10 $display("HLT:  Op3 is 1111. System Halting...");
+
+        #20 $finish;
+    end
+endmodule

@@ -1,0 +1,149 @@
+`timescale 1ns / 1ps
+
+module tb_predictor;
+
+    // Inputs
+    reg [15:0] PC_input;
+    reg clk;
+    reg rst;
+    reg p3;
+    reg [15:0] PC_update;
+    reg branch_order;
+    reg [15:0] actual_address;
+    reg actual_jump;
+
+    // Outputs
+    wire jump_enable;
+    wire [15:0] jump_address;
+
+    // Instantiate the Unit Under Test (UUT)
+    predictor uut (
+        .PC_input(PC_input), 
+        .clk(clk), 
+        .rst(rst), 
+        .jump_enable(jump_enable), 
+        .jump_address(jump_address), 
+        .update_enable(p3), 
+        .PC_update(PC_update), 
+        .branch_order(branch_order), 
+        .actual_address(actual_address), 
+        .actual_jump(actual_jump)
+    );
+
+    // クロック生成 (10ns周期)
+    always #5 clk = ~clk;
+
+    initial begin
+        // --- 初期化 ---
+        PC_input = 0;
+        clk = 0;
+        rst = 1;
+        p3 = 0;
+        PC_update = 0;
+        branch_order = 0;
+        actual_address = 0;
+        actual_jump = 0;
+
+        // --- リセットの実行 ---
+        $display("--- System Reset ---");
+        #10 rst = 0; // リセット有効 (Active Low)
+        #10 rst = 1; // リセット解除
+        #10;
+
+        // -----------------------------------------------------
+        // テストケース1: 初期状態の予測確認
+        // 初期値は2'b01なので、MSBは0となり「飛ばない(0)」予測になるはず
+        // -----------------------------------------------------
+        $display("\n--- Test 1: Initial Prediction ---");
+        PC_input = 16'h0010; // 下位6bitのインデックスは 6'b010000 (16)
+        #10;
+        $display("PC_input: %h -> Predict Jump: %b (Expected: 0)", PC_input, jump_enable);
+
+        // -----------------------------------------------------
+        // テストケース2: パターンB（初めてジャンプ成功・BTB更新）
+        // 実際のジャンプが発生し、BHTは 01 -> 10 になるはず
+        // -----------------------------------------------------
+        $display("\n--- Test 2: First Branch Taken (Pattern B) ---");
+        @(negedge clk);      // クロック立ち下がりで入力（setup違反を防ぐため）
+        p3 = 1;
+        branch_order = 1;
+        PC_update = 16'h0010;
+        actual_jump = 1;
+        actual_address = 16'h00A0; // 新しい飛び先アドレス
+        @(posedge clk); #1;  // クロックエッジを跨いで更新させる
+        p3 = 0;              // 学習オフ
+        
+        #10;
+        PC_input = 16'h0010; // 再度予測を読み出す
+        #10;
+        $display("PC_input: %h -> Predict Jump: %b, Target: %h (Expected: 1, 00a0)", PC_input, jump_enable, jump_address);
+
+        $display("\n--- Test 2b: PC[5] Tag Mismatch ---");
+        PC_input = 16'h0030; // same index as 0x0010 with PC[5] inverted
+        #10;
+        $display("PC_input: %h -> Predict Jump: %b (Expected: 0)", PC_input, jump_enable);
+
+        // -----------------------------------------------------
+        // テストケース3: パターンA（強く飛ぶ状態へ遷移）
+        // 再びジャンプ成功し、BHTは 10 -> 11 になるはず
+        // -----------------------------------------------------
+        $display("\n--- Test 3: Branch Taken Again (Pattern A, BHT 10 -> 11) ---");
+        @(negedge clk);
+        p3 = 1;
+        branch_order = 1;
+        PC_update = 16'h0010;
+        actual_jump = 1;
+        actual_address = 16'h00A0; // 前回と同じ飛び先
+        @(posedge clk); #1;
+        p3 = 0;
+
+        #10;
+        PC_input = 16'h0010;
+        #10;
+        $display("PC_input: %h -> Predict Jump: %b (Expected: 1)", PC_input, jump_enable);
+
+        // -----------------------------------------------------
+        // テストケース4: パターンC（飛ばなかった、BHT 11 -> 10へ降下）
+        // 今回は飛ばなかったため、BHTが減算される
+        // -----------------------------------------------------
+        $display("\n--- Test 4: Branch Not Taken (Pattern C, BHT 11 -> 10) ---");
+        @(negedge clk);
+        p3 = 1;
+        branch_order = 1;
+        PC_update = 16'h0010;
+        actual_jump = 0; // ジャンプしなかった
+        @(posedge clk); #1;
+        p3 = 0;
+
+        #10;
+        PC_input = 16'h0010;
+        #10;
+        // BHTは10になったが、MSBはまだ1なので「飛ぶ」予測を維持する（ヒステリシス）
+        $display("PC_input: %h -> Predict Jump: %b (Expected: 1)", PC_input, jump_enable);
+
+        // -----------------------------------------------------
+        // テストケース5: もう一度飛ばなかった（BHT 10 -> 01へ降下）
+        // -----------------------------------------------------
+        $display("\n--- Test 5: Branch Not Taken Again (Pattern C, BHT 10 -> 01) ---");
+        @(negedge clk);
+        p3 = 1;
+        branch_order = 1;
+        PC_update = 16'h0010;
+        actual_jump = 0; 
+        @(posedge clk); #1;
+        p3 = 0;
+
+        #10;
+        PC_input = 16'h0010;
+        #10;
+        // BHTが01になったので、MSBが0になりついに「飛ばない」予測に変わる
+        $display("PC_input: %h -> Predict Jump: %b (Expected: 0)", PC_input, jump_enable);
+
+        // -----------------------------------------------------
+        // シミュレーション終了
+        // -----------------------------------------------------
+        $display("\n--- Simulation Complete ---");
+        $finish;
+    end
+
+endmodule

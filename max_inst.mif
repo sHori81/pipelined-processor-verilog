@@ -1,0 +1,32 @@
+DEPTH = 4096;
+WIDTH = 16;
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+
+CONTENT
+BEGIN
+
+0000 : 8000;    -- LI   R0, 0
+0001 : 8108;    -- LI   R1, 8
+0002 : 8700;    -- LI   R7, 0
+0003 : 1800;    -- LD   R3, 0(R0)
+0004 : 8801;    -- ADDI R0, 1
+0005 : 9101;    -- SUBI R1, 1
+0006 : FD00;    -- ADD  R5, R7
+0007 : 9900;    -- CMPI R1, 0
+0008 : A000;    -- B    0
+0009 : B80A;    -- BE   done
+000A : 1000;    -- LD   R2, 0(R0)
+000B : 8801;    -- ADDI R0, 1
+000C : 9101;    -- SUBI R1, 1
+000D : FD00;    -- ADD  R5, R7
+000E : D350;    -- CMP  R3, R2
+000F : A000;    -- B    0
+0010 : B901;    -- BLT  update_max
+0011 : A0F4;    -- B    check
+0012 : D360;    -- MOV  R3, R2
+0013 : A0F2;    -- B    check
+0014 : D8D0;    -- OUT  R3
+0015 : C0F0;    -- HLT
+[0016..0FFF] : 0000;
+END;

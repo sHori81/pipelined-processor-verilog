@@ -1,0 +1,60 @@
+`timescale 1ns / 1ps
+
+module tb_alu;
+    // 入力用信号
+    reg [15:0] data_a, data_b;
+    reg [3:0] op3;
+    // 出力観測用信号
+    wire [15:0] data_output;
+    wire [3:0] data_szcv;
+
+    // ALUの接続
+    alu uut (
+        .data_a(data_a),
+        .data_b(data_b),
+        .op3(op3),
+        .data_output(data_output),
+        .data_szcv(data_szcv)
+    );
+
+// テスト手順
+    initial begin
+
+        // モニタリング
+        $monitor("Time=%0t | OP=%b | A=%h | B=%h | RES=%h | SZCV=%b", 
+                 $time, op3, data_a, data_b, data_output, data_szcv);
+
+        // --- テストケース 1: ADD (0000) ---
+        $display("\n--- Testing ADD ---");
+        op3 = 4'b0000;
+        data_a = 16'h0001; data_b = 16'h0002; #10; // 通常の加算 (1+2=3)
+        data_a = 16'hFFFF; data_b = 16'h0001; #10; // キャリー発生 (FFFF+1=0, C=1, Z=1)
+        data_a = 16'h4000; data_b = 16'h4000; #10; // オーバーフロー (正+正=負, V=1)
+
+        // --- テストケース 2: SUB (0001) ---
+        $display("\n--- Testing SUB ---");
+        op3 = 4'b0001;
+        data_a = 16'h0005; data_b = 16'h000A; #10; // 10 - 5 = 5
+        data_a = 16'h000A; data_b = 16'h0005; #10; // 5 - 10 = -5 (C=1, S=1)
+
+        // --- テストケース 3: 論理演算 (AND, OR, XOR) ---
+        $display("\n--- Testing Logic Ops ---");
+        data_a = 16'hAAAA; data_b = 16'h5555;
+        op3 = 4'b0010; #10; // AND (結果 0)
+        op3 = 4'b0011; #10; // OR  (結果 FFFF)
+        op3 = 4'b0100; #10; // XOR (結果 FFFF)
+
+        // --- テストケース 4: CMP (0101) ---
+        $display("\n--- Testing CMP ---");
+        op3 = 4'b0101;
+        data_a = 16'h0005; data_b = 16'h0005; #10; // 同値比較 (Z=1)
+
+        // --- テストケース 5: MOV (0110) ---
+        $display("\n--- Testing MOV ---");
+        op3 = 4'b0110;
+        data_a = 16'h1234; data_b = 16'h0000; #10; // Aをそのまま出力
+
+        $display("\nTests Completed.");
+        $finish;
+    end
+endmodule
